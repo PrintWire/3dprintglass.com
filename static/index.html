@@ -266,6 +266,14 @@
     </div>
 
 
+    <!-- Latest Headlines (real, pulled from live industry feeds) -->
+    <div class="ed-sidebar-block">
+      <h4>Latest Headlines</h4>
+      <div id="latestHeadlines">
+        <div style="padding:0.5rem 0;color:var(--text-faint);font-size:0.85rem;">Loading latest coverage…</div>
+      </div>
+    </div>
+
     <!-- Ad Placeholder -->
     <div class="ed-sidebar-block" style="text-align:center; color: var(--text-faint); font-size: 0.75rem; padding: 2.5rem 1rem;">
       <div style="border: 1px dashed var(--border); border-radius: 4px; padding: 2rem 1rem;">
@@ -473,6 +481,26 @@ document.querySelector('.ed-nav-toggle')?.addEventListener('click', () => {
     grid.innerHTML = top.length
       ? top.map(card).join('')
       : '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-faint);">Unable to load news.</div>';
+
+    // Sidebar: real headlines from the same live feeds. No fabricated titles or read counts.
+    var side = document.getElementById('latestHeadlines');
+    if (side) {
+      var picks = merged.slice(0, 5);
+      side.innerHTML = picks.length
+        ? picks.map(function(a, i){
+            var attrs = a.local
+              ? 'href="' + esc(a.link) + '"'
+              : 'href="' + esc(a.link) + '" target="_blank" rel="noopener"';
+            return '<div class="ed-popular-item">' +
+              '<span class="ed-popular-num">' + (i + 1) + '</span>' +
+              '<div>' +
+                '<h3><a ' + attrs + '>' + esc(a.title) + '</a></h3>' +
+                '<div class="ed-popular-meta">' + esc(a.source || '') +
+                  (a.dateStr ? ' · ' + esc(a.dateStr) : '') + '</div>' +
+              '</div></div>';
+          }).join('')
+        : '<div style="padding:0.5rem 0;color:var(--text-faint);font-size:0.85rem;">Headlines unavailable right now.</div>';
+    }
   }
 })();
 
